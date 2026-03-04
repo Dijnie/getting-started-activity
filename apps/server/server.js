@@ -1,10 +1,15 @@
 import express from "express";
 import dotenv from "dotenv";
 import fetch from "node-fetch";
-dotenv.config({ path: "../.env" });
+import { fileURLToPath } from "url";
+import { dirname, resolve } from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+dotenv.config({ path: resolve(__dirname, "../../.env") });
 
 const app = express();
-const port = 3001;
+const port = 8080;
 
 // Allow express to parse JSON bodies
 app.use(express.json());

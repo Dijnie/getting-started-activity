@@ -1,11 +1,11 @@
 {
-  "name": "getting-starter-activity-server",
+  "name": "server",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "dev": "npm start"
+    "dev": "node server.js"
   },
   "keywords": [],
   "author": "",
