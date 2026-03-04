@@ -1,14 +1,28 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { getDiscordSdk } from "@/lib/discord";
+import {
+  getLaunchParamsFromSearchParams,
+  type DiscordLaunchParams,
+} from "@/lib/launch-params";
 import type { CommandResponse } from "@discord/embedded-app-sdk";
 
 type AuthResponse = CommandResponse<"authenticate">;
 
 export function DiscordActivity() {
+  const searchParams = useSearchParams();
+  const [launchParams, setLaunchParams] = useState<DiscordLaunchParams | null>(
+    null
+  );
   const [status, setStatus] = useState("Initializing...");
   const [auth, setAuth] = useState<AuthResponse | null>(null);
+
+  useEffect(() => {
+    setLaunchParams(getLaunchParamsFromSearchParams(searchParams));
+  }, [searchParams]);
+
   useEffect(() => {
     async function setup() {
       try {
@@ -73,6 +87,12 @@ export function DiscordActivity() {
   return (
     <div>
       <h1>Welcome, {auth?.user?.global_name || auth?.user?.username}!</h1>
+      {launchParams && (
+        <section>
+          <h2>Launch params (từ URL)</h2>
+          <pre>{JSON.stringify(launchParams, null, 2)}</pre>
+        </section>
+      )}
       <pre>{JSON.stringify(auth, null, 2)}</pre>
     </div>
   );
