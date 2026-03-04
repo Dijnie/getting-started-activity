@@ -1,13 +1,12 @@
 import type { NextConfig } from "next";
 import dotenv from "dotenv";
 import { resolve } from "path";
-import { fileURLToPath } from "url";
 
-// Load root .env file (ESM-safe __dirname)
-const __dirname = fileURLToPath(new URL(".", import.meta.url));
-dotenv.config({ path: resolve(__dirname, "../../.env") });
+// Load root .env (when run from apps/client, cwd is apps/client)
+dotenv.config({ path: resolve(process.cwd(), "../../.env") });
 
 const nextConfig: NextConfig = {
+
   allowedDevOrigins: ["*"],
   async rewrites() {
     return [
@@ -17,6 +16,7 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  reactCompiler: true,
 };
 
 export default nextConfig;
