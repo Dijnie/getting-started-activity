@@ -80,7 +80,12 @@ export function DiscordActivity() {
 
         setStatus({ phase: "authenticated", user: auth.user as DiscordUser });
       } catch (err) {
-        const message = err instanceof Error ? err.message : String(err);
+        const message =
+          err instanceof Error
+            ? err.message
+            : typeof err === "object" && err !== null
+              ? JSON.stringify(err)
+              : String(err);
         log(`ERROR: ${message}`);
         setStatus({ phase: "error", message });
       }
