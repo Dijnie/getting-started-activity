@@ -1,6 +1,5 @@
-import express from "express";
+import express, { type Request, type Response } from "express";
 import dotenv from "dotenv";
-import fetch from "node-fetch";
 import { fileURLToPath } from "url";
 import { dirname, resolve } from "path";
 
@@ -14,23 +13,33 @@ const port = 8080;
 // Allow express to parse JSON bodies
 app.use(express.json());
 
-app.post("/api/token", async (req, res) => {
+interface TokenRequestBody {
+  code: string;
+  redirect_uri: string;
+}
+
+interface DiscordTokenResponse {
+  access_token: string;
+  [key: string]: unknown;
+}
+
+app.post("/api/token", async (req: Request<unknown, unknown, TokenRequestBody>, res: Response) => {
   try {
-    const response = await fetch(`https://discord.com/api/oauth2/token`, {
+    const response = await fetch("https://discord.com/api/oauth2/token", {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
       body: new URLSearchParams({
-        client_id: process.env.DISCORD_CLIENT_ID,
-        client_secret: process.env.DISCORD_CLIENT_SECRET,
+        client_id: process.env.DISCORD_CLIENT_ID!,
+        client_secret: process.env.DISCORD_CLIENT_SECRET!,
         grant_type: "authorization_code",
         code: req.body.code,
         redirect_uri: req.body.redirect_uri,
       }),
     });
 
-    const data = await response.json();
+    const data = (await response.json()) as DiscordTokenResponse;
     if (!response.ok) {
       return res.status(response.status).json({ error: data });
     }
